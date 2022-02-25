@@ -2,6 +2,8 @@
 
 package lesson1
 
+import java.io.File
+
 /**
  * Сортировка времён
  *
@@ -97,7 +99,19 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 121.3
  */
 fun sortTemperatures(inputName: String, outputName: String) {
-    TODO()
+    /*
+        time: O(n*log(n))
+        space: O(n)
+     */
+
+    val sortTemp = File(inputName).useLines { lines ->
+        lines.map {
+            it.toDouble()
+        }
+            .sorted()
+            .joinToString(System.lineSeparator())
+    }
+    File(outputName).bufferedWriter().use { it.write(sortTemp) }
 }
 
 /**
@@ -130,7 +144,31 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  */
 fun sortSequence(inputName: String, outputName: String) {
-    TODO()
+    /*
+         time: O(n)
+         space: O(n)
+     */
+    val file = File(inputName).readLines()
+    val countElement = file.groupingBy { it }.eachCount()
+    val max = countElement.maxByOrNull { it.value }
+    var changeVal: String? = max?.key
+
+    countElement.forEach { if (it.value == max?.value && it.key.toInt() < max.key.toInt()) changeVal = it.key }
+
+    File(outputName).bufferedWriter().use { out ->
+        for (line in file) {
+            if (line != changeVal) {
+                out.write(line)
+                out.newLine()
+            } else continue
+        }
+        if (max != null) {
+            repeat(max.value) {
+                out.write(changeVal)
+                out.newLine()
+            }
+        }
+    }
 }
 
 /**

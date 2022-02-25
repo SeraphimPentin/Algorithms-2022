@@ -2,6 +2,10 @@
 
 package lesson2
 
+import java.io.File
+import kotlin.math.ceil
+import kotlin.math.sqrt
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -29,6 +33,34 @@ package lesson2
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
     TODO()
 }
+//    val file = File(inputName).readLines().map { it.toInt() }
+//    val delta = mutableListOf<Int>()
+//    for (i in 0..file.size - 2) delta.add(i, file[i + 1] - file[i])
+//    File(inputName).forEachLine { if (!it.matches(Regex("""[0-9]+"""))) throw IllegalArgumentException() }
+//    var answer: Pair<Int, Int> = Pair(0, 0)
+//    val subL = delta.take(delta.size / 2)
+//    val subR = delta.takeLast(delta.size / 2)
+//
+//    var maxL = subL[0]
+//    val maxR = subR[0]
+//    for (i in subL.indices) {
+//        val current = subL[i] + subL[i + 1]
+//        if (subL[i] > maxL) maxL = subL[i]
+//
+//    }
+//
+////    var difference = -1
+////    for (buy in 1 until file.size) {
+////        val sublist = file.take(buy + 1)
+////        for (sell in 1 until sublist.size) {
+////            if (file[buy] - sublist[sell] > difference) {
+////                difference = file[buy] - sublist[sell]
+////                answer = Pair(sell + 1, buy + 1)
+////            } else continue
+////        }
+////    }
+//    return answer
+//}
 
 /**
  * Задача Иосифа Флафия.
@@ -95,7 +127,30 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * вернуть ту из них, которая встречается раньше в строке first.
  */
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+
+    /*
+    x, y - длинна слов
+    T(n)=O(x*y),
+    R(n)=O(x*y)
+     */
+
+    val firstLen = first.length
+    val secondLen = second.length
+    var maxLen = 0
+    var term = 0
+    val matrix: Array<Array<Int>> = Array(firstLen) { Array(secondLen) { 0 } }
+    for (i in 1 until firstLen) {
+        for (j in 1 until secondLen) {
+            if (first[i - 1] == second[j - 1]) {
+                matrix[i][j] += matrix[i - 1][j - 1] + 1
+                if (maxLen < matrix[i][j]) {
+                    term = i
+                    maxLen = matrix[i][j]
+                }
+            }
+        }
+    }
+    return first.substring(term - maxLen, term)
 }
 
 /**
@@ -109,5 +164,23 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 fun calcPrimesNumber(limit: Int): Int {
-    TODO()
+    /*
+       трудоемкость: O(n)
+       ресурсоемкость: O(n)
+     */
+    if (limit <= 1) return 0
+    var count = 0
+    for (i in 1..limit step 2) {
+        if (isPrime(i)) count++
+        else continue
+    }
+    return count
+}
+
+fun isPrime(x: Int): Boolean {
+    val maxTest = ceil(sqrt(x.toDouble()))
+    for (i in 2..maxTest.toInt()) {
+        if (x % i == 0) return false
+    }
+    return true
 }

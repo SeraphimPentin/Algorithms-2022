@@ -31,6 +31,7 @@ java {
 
 repositories {
     mavenCentral()
+    jcenter()
     maven {
         url = 'https://maven.polytech.vorpal-research.science'
     }
@@ -88,10 +89,10 @@ task kotoedRun(
     def testPackages = sourceSets['test'].java.srcDirs.stream()
             .flatMap {
                 dir -> Files.walk(dir.toPath())
-                            .map { it.toFile() }
-                            .filter { it.isDirectory() }
-                            .map { it.path }
-                            .map { it.substring(dir.path.length()) }
+                        .map { it.toFile() }
+                        .filter { it.isDirectory() }
+                        .map { it.path }
+                        .map { it.substring(dir.path.length()) }
             }
             .filter { !it.isEmpty() }
             .map { it.substring(1) }

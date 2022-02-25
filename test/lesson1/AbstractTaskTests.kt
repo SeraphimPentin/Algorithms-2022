@@ -136,6 +136,22 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         } finally {
             File("temp.txt").delete()
         }
+        try {
+            sortTemperatures("input/temp_in2.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                 -134.0
+                 -123.8
+                 -38.6
+                 0.5
+                 34.7
+                 57.1
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        }
 
         fun testGeneratedTemperatures(size: Int): PerfResult<Unit> {
             try {
@@ -213,6 +229,33 @@ abstract class AbstractTaskTests : AbstractFileTests() {
                         2
                         2
                     """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        }
+        try {
+            sortSequence("input/seq_in6.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                        2
+                        2
+                        2
+                        3
+                        3
+                        4
+                        5
+                        6
+                        7
+                        7
+                        7
+                        7
+                        7
+                        1
+                        1
+                        1
+                        1
+                        1""".trimIndent()
             )
         } finally {
             File("temp.txt").delete()
