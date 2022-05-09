@@ -8,8 +8,6 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
         require(bits in 2..31)
     }
 
-    var flag = mutableListOf<Boolean>()
-
     private val capacity = 1 shl bits
 
     private val storage = Array<Any?>(capacity) { null }
@@ -30,7 +28,7 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
         var index = element.startingIndex()
         var current = storage[index]
         while (current != null) {
-            if (current == element && !flag[index]) {
+            if (current == element) {
                 return true
             }
             index = (index + 1) % capacity
@@ -54,7 +52,7 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
         var index = startingIndex
         var current = storage[index]
         while (current != null) {
-            if (current == element && !flag[index]) {
+            if (current == element) {
                 return false
             }
             index = (index + 1) % capacity
@@ -62,7 +60,6 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
             current = storage[index]
         }
         storage[index] = element
-        if (flag[index]) flag[index] = false
         size++
         return true
     }
@@ -79,40 +76,8 @@ class KtOpenAddressingSet<T : Any>(private val bits: Int) : AbstractMutableSet<T
      * Средняя
      */
     override fun remove(element: T): Boolean {
-        var index = element.startingIndex()
-        var current = storage[index]
-        while (current != null) {
-            if (current == element && !flag[index]) {
-                flag[index] = true
-                size--
-                return true
-            }
-            index = (index + 1) % capacity
-            current = storage[index]
-        }
-        return false
+        TODO("not implemented")
     }
-
-
-    //-----------------------------------------------------
-    /**
-    val startingIndex = element.startingIndex()
-    var index = startingIndex
-    var current = storage[index]
-    while (current != null) {
-    if (contains(current) == element) {
-    //                remove(storage.indexOf(element))
-    remove(current)
-    size--
-    return true
-    }
-    index = (index + 1) % capacity
-    check(index != startingIndex) { "Table is full" }
-    current = storage[index]
-    }
-    return false
-     **/
-//-----------------------------------------------------
 
 
     /**
