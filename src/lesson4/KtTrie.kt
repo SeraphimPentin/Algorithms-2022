@@ -71,7 +71,99 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
      * Сложная
      */
     override fun iterator(): MutableIterator<String> {
-        TODO()
+        return TrieIterator()
     }
 
+    inner class TrieIterator internal constructor() : MutableIterator<String> {
+
+        private val nodes = Stack<Pair<Node, Char>>()
+        private var current: Node? = null
+
+        init {
+            nodes.push(root to 0.toChar())
+        }
+
+        /**
+         * временные затраты: O(1)
+         * ресурсоемкость: O(1)
+         */
+        override fun hasNext(): Boolean {
+            nodes.reversed().forEach {
+                if (it.hasNext()) return true
+            }
+            return false
+        }
+
+        /**
+         * временные затраты: O(1)
+         * ресурсоемкость: O(1)
+         */
+        override fun next(): String {
+            var current = nodes.pop()
+            this.current = current.first
+
+            while (!current.hasNext()) {
+                if (nodes.empty()) throw NoSuchElementException()
+                current = nodes.pop()
+            }
+
+            val next = current.next()
+            nodes.push(next)
+            fill()
+            return nodes.subList(0, nodes.lastIndex).joinToString("") { it.second.toString() }
+        }
+
+        /**
+         * временные затраты: O(1)
+         * ресурсоемкость: O(1)
+         */
+        override fun remove() {
+            if (current == null) throw IllegalStateException()
+
+            var last = nodes.pop()
+            val hasAnotherAtThisBranch = last.first.children.size > 1
+
+            if (hasAnotherAtThisBranch) {
+                last.first.children.remove(last.second)
+                nodes.push(last)
+            } else {
+                while (last.first.children.size == 1 && nodes.isNotEmpty()) {
+                    last.first.children.remove(last.second)
+                    last = nodes.pop()
+                }
+
+                nodes.push(last.previousOrFirst())
+                last.first.children.remove(last.second)
+            }
+            size--
+            current = null
+        }
+
+        private fun Pair<Node, Char>.hasNext(): Boolean {
+            val nextIdx = first.children.keys.indexOf(second) + 1
+            return first.children.keys.size > nextIdx
+        }
+
+        private fun Pair<Node, Char>.next(): Pair<Node, Char> {
+            val nextId = first.children.keys.indexOf(second) + 1
+            return first to first.children.keys.toList()[nextId]!!
+        }
+
+        private fun Pair<Node, Char>.previousOrFirst(): Pair<Node, Char> {
+            val prevId = first.children.keys.indexOf(second).let { if (it < 1) 0 else it - 1 }
+            return first to first.children.keys.toList()[prevId]!!
+        }
+
+        private fun fill() {
+            var current = nodes.peek()
+            while (current.second != 0.toChar()) {
+                val nextNode = current.first.children[current.second]!!
+                val nextKey = nextNode.children.firstKey()
+
+                val next = nextNode to nextKey
+                nodes.push(next)
+                current = next
+            }
+        }
+    }
 }
