@@ -2,6 +2,8 @@
 
 package lesson6
 
+import lesson6.impl.GraphBuilder
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -60,8 +62,31 @@ fun Graph.findEulerLoop(): List<Graph.Edge> {
  * |
  * J ------------ K
  */
+
+// Трудоемкость O(V*E)
+// Ресурсоемкость O(V)
+
 fun Graph.minimumSpanningTree(): Graph {
-    TODO()
+    val result = GraphBuilder()
+    val hashMap = hashMapOf<Graph.Vertex, Int>()
+    for ((i, vertex) in vertices.withIndex()) {
+        hashMap[result.addVertex(vertex.name)] = i
+    }
+    for (edge in edges) {
+        val first = edge.begin
+        val second = edge.end
+        if (hashMap[first] != hashMap[second]) {
+            val f = hashMap[first]!!
+            val s = hashMap[second]!!
+            result.addConnection(first, second, 0)
+            for (entry in hashMap.entries.stream()) {
+                if (entry.value == f) {
+                    entry.setValue(s)
+                }
+            }
+        }
+    }
+    return result.build()
 }
 
 /**
